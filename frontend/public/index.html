@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Expense Tracker</h1>
+
+        <!-- Add Expense Form -->
+        <form id="expenseForm">
+            <input type="number" id="amount" placeholder="Amount" required>
+            <input type="text" id="category" placeholder="Category" required>
+            <input type="text" id="note" placeholder="Note">
+            <button type="submit">Add Expense</button>
+        </form>
+
+        <!-- Expense List -->
+        <h2>Expenses</h2>
+        <table id="expenseTable">
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Expenses will be added here dynamically -->
+            </tbody>
+        </table>
+
+        <!-- Chart -->
+        <h2>Expense Chart</h2>
+        <div id="chart">
+            <!-- Bars will be added here dynamically -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
