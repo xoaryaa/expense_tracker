@@ -1,45 +1,75 @@
-const expenseForm = document.getElementById('expenseForm');
-const expenseTable = document.getElementById('expenseTable').getElementsByTagName('tbody')[0];
-const chart = document.getElementById('chart');
+// Show Home Page
+function showHome() {
+    document.getElementById('home').style.display = 'block';
+    document.getElementById('history').style.display = 'none';
+    document.getElementById('graphs').style.display = 'none';
+}
+
+// Show History Page
+function showHistory() {
+    document.getElementById('home').style.display = 'none';
+    document.getElementById('history').style.display = 'block';
+    document.getElementById('graphs').style.display = 'none';
+    fetchExpenses();
+}
+
+// Show Graphs Page
+function showGraphs() {
+    document.getElementById('home').style.display = 'none';
+    document.getElementById('history').style.display = 'none';
+    document.getElementById('graphs').style.display = 'block';
+    renderChart();
+}
 
 // Fetch expenses from the backend
 async function fetchExpenses() {
     const response = await fetch('http://localhost:5000/api/expenses');
     const expenses = await response.json();
     renderExpenses(expenses);
-    renderChart(expenses);
 }
 
 // Render expenses in the table
 function renderExpenses(expenses) {
-    expenseTable.innerHTML = ''; // Clear the table
+    const tableBody = document.getElementById('expenseTable').getElementsByTagName('tbody')[0];
+    tableBody.innerHTML = ''; // Clear the table
     expenses.forEach(expense => {
-        const row = expenseTable.insertRow();
+        const row = tableBody.insertRow();
         row.insertCell().textContent = expense.amount;
         row.insertCell().textContent = expense.category;
         row.insertCell().textContent = expense.note;
+        row.insertCell().textContent = expense.date;
     });
 }
 
 // Render the chart
-function renderChart(expenses) {
-    chart.innerHTML = ''; // Clear the chart
-    const amounts = expenses.map(expense => expense.amount);
-    const maxAmount = Math.max(...amounts, 1); // Avoid division by zero
-
-    amounts.forEach(amount => {
-        const bar = document.createElement('div');
-        bar.className = 'bar';
-        bar.style.height = `${(amount / maxAmount) * 100}%`;
-        chart.appendChild(bar);
-    });
+function renderChart() {
+    const ctx = document.getElementById('expenseChart').getContext('2d');
+    fetch('http://localhost:5000/api/expenses')
+        .then(response => response.json())
+        .then(expenses => {
+            const data = {
+                labels: expenses.map(e => e.category),
+                datasets: [
+                    {
+                        label: 'Expenses',
+                        data: expenses.map(e => e.amount),
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                    },
+                ],
+            };
+            new Chart(ctx, {
+                type: 'bar',
+                data: data,
+            });
+        });
 }
 
 // Add a new expense
-expenseForm.addEventListener('submit', async (e) => {
+document.getElementById('expenseForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const amount = document.getElementById('amount').value;
-    const category = document.getElementById('category').value;
     const note = document.getElementById('note').value;
 
     const response = await fetch('http://localhost:5000/api/expenses', {
@@ -49,10 +79,10 @@ expenseForm.addEventListener('submit', async (e) => {
     });
 
     if (response.ok) {
-        fetchExpenses(); // Refresh the list and chart
-        expenseForm.reset(); // Clear the form
+        alert('Expense added!');
+        document.getElementById('expenseForm').reset();
     }
 });
 
 // Initial load
-fetchExpenses();
+showHome();
