@@ -50,6 +50,14 @@ Welcome to **Expense Tracker**, your ultimate tool for managing personal finance
    ```bash
    npm install
 3. Repeat for Frontend & Backend as well
+   ```bash
+   cd frontend
+   npm install
+```
+```bash
+cd backend
+npm install
+```
 
 4. Start the server(using Concurrently):
    ```bash
