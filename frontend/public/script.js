@@ -1,37 +1,42 @@
-// Show Home Page
+// ------------------------------
+// Global Variables
+// ------------------------------
+let chartInstance = null; // Track the current chart instance
+
+// ------------------------------
+// Page Navigation Functions
+// ------------------------------
 function showHome() {
     document.getElementById('home').style.display = 'block';
     document.getElementById('history').style.display = 'none';
     document.getElementById('graphs').style.display = 'none';
 }
-
-// Show History Page
 function showHistory() {
     document.getElementById('home').style.display = 'none';
     document.getElementById('history').style.display = 'block';
     document.getElementById('graphs').style.display = 'none';
-    fetchExpenses(); // Fetch and display expenses
+    fetchExpenses(); // Refresh the table
 }
 
-// Show Graphs Page
 function showGraphs() {
     document.getElementById('home').style.display = 'none';
     document.getElementById('history').style.display = 'none';
     document.getElementById('graphs').style.display = 'block';
-    renderChart(); // Render the chart
+    renderChart(); // Render the chart on page load
 }
 
-// Fetch expenses from the backend
+// ------------------------------
+// Expense Fetching and Rendering
+// ------------------------------
 async function fetchExpenses() {
     const response = await fetch('http://localhost:5000/api/expenses');
     const expenses = await response.json();
     renderExpenses(expenses);
 }
 
-// Render expenses in the table
 function renderExpenses(expenses) {
-    const tableBody = document.getElementById('expenseTable').getElementsByTagName('tbody')[0];
-    tableBody.innerHTML = ''; // Clear the table
+    const tableBody = document.getElementById('expenseTable').querySelector('tbody');
+    tableBody.innerHTML = '';
     expenses.forEach(expense => {
         const row = tableBody.insertRow();
         row.insertCell().textContent = expense.amount;
@@ -41,48 +46,153 @@ function renderExpenses(expenses) {
     });
 }
 
-// Render the chart
+// ------------------------------
+// Chart Functions
+// ------------------------------
+function destroyChart() {
+    if (chartInstance) {
+        chartInstance.destroy(); // Clean up previous chart
+    }
+}
+
 function renderChart() {
+    destroyChart(); // Clear previous chart
+
     const ctx = document.getElementById('expenseChart').getContext('2d');
+    const chartType = document.getElementById('chartType').value;
+    const categoryFilter = document.getElementById('categoryFilter').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
     fetch('http://localhost:5000/api/expenses')
         .then(response => response.json())
         .then(expenses => {
+            // Filter data based on selections
+            let filteredExpenses = expenses.filter(expense => {
+                const expenseDate = new Date(expense.date);
+                const matchesCategory = categoryFilter === 'all' || expense.category_id == categoryFilter;
+                const matchesDate = (!startDate || expenseDate >= new Date(startDate)) &&
+                    (!endDate || expenseDate <= new Date(endDate));
+                return matchesCategory && matchesDate;
+            });
+
+            // Group data for the chart
+            const categories = [...new Set(filteredExpenses.map(e => e.category))];
+            const categoryTotals = categories.map(category => {
+                return filteredExpenses
+                    .filter(e => e.category === category)
+                    .reduce((sum, e) => sum + parseFloat(e.amount), 0);
+            });
+
+            // ------------------------------
+            // Chart Data Configuration
+            // ------------------------------
             const data = {
-                labels: expenses.map(e => e.category),
-                datasets: [
-                    {
-                        label: 'Expenses',
-                        data: expenses.map(e => e.amount),
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1,
-                    },
-                ],
+                labels: categories,
+                datasets: [{
+                    label: 'Total Expenses',
+                    data: categoryTotals,
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                        '#FF9F40', '#7B68EE', '#20B2AA', '#FF69B4', '#32CD32'
+                    ],
+                    borderColor: 'rgba(255, 255, 255, 0.8)',
+                    borderWidth: 2,
+                    hoverOffset: 20
+                }]
             };
-            new Chart(ctx, {
-                type: 'bar',
+
+            // ------------------------------
+            // Chart Options Configuration
+            // ------------------------------
+            const options = {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Expense Breakdown',
+                        font: {
+                            size: 18
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                        bodyFont: {
+                            size: 14
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'easeOutQuart'
+                }
+            };
+
+            // Create the chart
+            chartInstance = new Chart(ctx, {
+                type: chartType,
                 data: data,
+                options: options
             });
         });
 }
 
-// Add a new expense
+// ------------------------------
+// Event Listeners
+// ------------------------------
+// Add Expense Form Submission
 document.getElementById('expenseForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const amount = document.getElementById('amount').value;
+    const categoryId = document.getElementById('category').value;
     const note = document.getElementById('note').value;
 
     const response = await fetch('http://localhost:5000/api/expenses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount, category_id: 1, note }), // Hardcoded category_id for simplicity
+        body: JSON.stringify({ amount, category_id: categoryId, note }),
     });
 
     if (response.ok) {
         alert('Expense added!');
         document.getElementById('expenseForm').reset();
+        if (document.getElementById('graphs').style.display === 'block') {
+            renderChart(); // Refresh chart if on graphs page
+        }
     }
 });
 
-// Initial load
-showHome();
+// Apply Filters Button (in Graphs Page)
+document.querySelector('#graphs button').addEventListener('click', renderChart);
+
+// ------------------------------
+// Initial Setup
+// ------------------------------
+showHome(); // Load the homepage by default

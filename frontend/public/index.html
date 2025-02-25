@@ -14,11 +14,22 @@
         <a href="#" onclick="showHistory()">History</a>
         <a href="#" onclick="showGraphs()">Graphs</a>
     </nav>
-
+<br><br><br><br><br><br><br><br>
     <div id="home">
         <h1>Add Expense</h1>
         <form id="expenseForm">
             <input type="number" id="amount" placeholder="Amount" required>
+            <!-- <input type="radio" id="category" placeholder="Category" required> -->
+            <label for="category">Select a category:</label>
+            <select id="category" name="category" required>
+                <option value="">--Select--</option>
+                <option value="1">Food</option>
+                <option value="2">Clothes</option>
+                <option value="3">Skincare/Makeup</option>
+                <option value="4">Entertainment</option>
+                <option value="5">Utilities</option>
+            </select>
+
             <input type="text" id="note" placeholder="Note">
             <button type="submit">Add Expense</button>
         </form>
@@ -49,11 +60,32 @@
         </table>
     </div>
 
-    <div id="graphs" style="display: none;">
+    <!-- <div id="graphs" style="display: none;">
         <h1>Expense Graphs</h1>
         <canvas id="expenseChart"></canvas>
+    </div> -->
+<div id="graphs" style="display: none;">
+    <h1>Expense Graphs</h1>
+    <div class="filters">
+        <select id="chartType">
+            <option value="bar">Bar Chart</option>
+            <option value="pie">Pie Chart</option>
+            <option value="line">Line Chart</option>
+        </select>
+        <select id="categoryFilter">
+            <option value="all">All Categories</option>
+            <option value="1">Food</option>
+            <option value="2">Clothes</option>
+            <option value="3">Skincare/Makeup</option>
+            <option value="4">Entertainment</option>
+            <option value="5">Utilities</option>
+        </select>
+        <input type="date" id="startDate">
+        <input type="date" id="endDate">
+        <button onclick="renderChart()">Apply Filters</button>
     </div>
-
+    <canvas id="expenseChart"></canvas>
+</div>
     <!-- Include Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
