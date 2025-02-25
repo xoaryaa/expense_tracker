@@ -10,7 +10,7 @@ function showHistory() {
     document.getElementById('home').style.display = 'none';
     document.getElementById('history').style.display = 'block';
     document.getElementById('graphs').style.display = 'none';
-    fetchExpenses();
+    fetchExpenses(); // Fetch and display expenses
 }
 
 // Show Graphs Page
@@ -18,7 +18,7 @@ function showGraphs() {
     document.getElementById('home').style.display = 'none';
     document.getElementById('history').style.display = 'none';
     document.getElementById('graphs').style.display = 'block';
-    renderChart();
+    renderChart(); // Render the chart
 }
 
 // Fetch expenses from the backend
