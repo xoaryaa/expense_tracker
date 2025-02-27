@@ -1,0 +1,134 @@
+/* Navbar nav {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background-color: #333;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+} */
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+    background-color: #333;
+    position: fixed;
+    /* Fix the navbar at the top */
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px 15px;
+}
+
+nav a:hover {
+    background-color: #555;
+    border-radius: 5px;
+}
+
+/* Home Page */
+#home {
+    text-align: center;
+    padding: 20px;
+}
+
+#expenseForm {
+    margin-bottom: 20px;
+}
+
+#expenseForm input {
+    padding: 15px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#expenseForm button {
+    padding: 15px 20px;
+    background-color: #db9ddc;
+    color: black;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.categories {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.category-block {
+    padding: 20px;
+    background-color: #f8dd44;
+    color: black;
+    cursor: pointer;
+    
+}
+
+/* History Page */
+#history {
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th,
+td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #f8f9fa;
+}
+
+/* Graphs Page */
+#graphs {
+    padding: 50px;
+    
+}
+
+canvas {
+    width: 800px;
+    margin: 0 auto;
+}
+
+.filters {
+    margin: 50px 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filters select,
+.filters input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.filters button {
+    padding: 8px 16px;
+    background-color: #2833a7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}

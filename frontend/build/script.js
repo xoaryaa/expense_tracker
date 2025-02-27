@@ -1,10 +1,8 @@
 // ------------------------------
 // Global Variables
 // ------------------------------
-// import dotenv from "dotenv";
-// dotenv.config()
 let chartInstance = null; // Track the current chart instance
-// const ip_addr = process.env.IP_ADDR
+const ip_addr = process.env.IP_ADDR
 // ------------------------------
 // Page Navigation Functions
 // ------------------------------
@@ -31,7 +29,7 @@ function showGraphs() {
 // Expense Fetching and Rendering
 // ------------------------------
 async function fetchExpenses() {
-    const response = await fetch(`http://172.20.10.4:5000/api/expenses`);
+    const response = await fetch(`http://${ip_addr}:5000/api/expenses`);
     const expenses = await response.json();
     renderExpenses(expenses);
 }
@@ -66,7 +64,7 @@ function renderChart() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
 
-    fetch(`http://172.20.10.4/api/expenses`)
+    fetch(`http://${ip_addr}/api/expenses`)
         .then(response => response.json())
         .then(expenses => {
             // Filter data based on selections
@@ -176,7 +174,7 @@ document.getElementById('expenseForm').addEventListener('submit', async (e) => {
     const categoryId = document.getElementById('category').value;
     const note = document.getElementById('note').value;
 
-    const response = await fetch(`http://172.20.10.4:5000/api/expenses`, {
+    const response = await fetch(`http://${ip_addr}:5000/api/expenses`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount, category_id: categoryId, note }),

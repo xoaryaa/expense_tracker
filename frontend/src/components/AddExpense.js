@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import dotenv from "dotenv";
+dotenv.config()
+
+const ip_addr = process.env.IP_ADDR
 
 const AddExpense = ({ onAdd }) => {
     const [amount, setAmount] = useState('');
@@ -7,7 +11,7 @@ const AddExpense = ({ onAdd }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch('http://localhost:5000/api/expenses', {
+        const response = await fetch(`http://${ip_addr}/api/expenses`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ amount, category_id: 1, note }), // Hardcoded category_id for simplicity

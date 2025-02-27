@@ -14,5 +14,8 @@
     "@capacitor/cli": "^7.0.1",
     "@capacitor/core": "^7.0.1",
     "concurrently": "^9.1.2"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.7"
   }
 }
